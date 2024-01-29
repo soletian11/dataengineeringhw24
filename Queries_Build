@@ -1,0 +1,54 @@
+
+Select count(1) from  public.green_taxi_data a where a.lpep_pickup_datetime::DATE = '2019-09-18' and 
+a.lpep_dropoff_datetime::DATE = '2019-09-18';
+--15612
+
+Select max(trip_distance) , lpep_pickup_datetime::DATE from public.green_taxi_data a 
+where a.lpep_pickup_datetime::DATE  IN ( '2019-09-18' , '2019-09-16' , '2019-09-26' , '2019-09-21' )
+group by lpep_pickup_datetime,trip_distance
+order by trip_distance desc;
+--"2019-09-26"
+341.64
+
+
+Select b."Borough", sum(total_amount) from  public.green_taxi_data a , public.zone_data b where a.lpep_pickup_datetime::DATE = '2019-09-18' 
+and a.lpep_dropoff_datetime::DATE = '2019-09-18'
+and a."PULocationID"=b."LocationID" and b."Borough" NOT IN ('Unknown')
+group by b."Borough"
+order by sum(total_amount)>50000 desc;
+
+
+"Brooklyn"
+"Manhattan"
+"Queens"
+
+
+
+
+Select a.tip_amount as pickuptip, pickupzone."Zone"  as pickzone,
+dropoffzone."Zone",
+a.*
+from  public.green_taxi_data a , 
+public.zone_data pickupzone,public.zone_data dropoffzone
+where
+a."PULocationID"=pickupzone."LocationID" and pickupzone."Borough" NOT IN ('Unknown')
+and a."DOLocationID"=dropoffzone."LocationID"
+and pickupzone."Zone"='Astoria'
+and EXTRACT(MONTH FROM a.lpep_pickup_datetime::DATE)='9' 
+AND EXTRACT(YEAR FROM a.lpep_pickup_datetime::DATE)='2019'
+--group by dropoffzone."Zone"
+order by  a.tip_amount desc;
+
+62.31	"Astoria"	"JFK Airport"
+
+
+01-docker-terraform/1_terraform_gcp/terraform
+
+https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/7a251b614bf1cdd6508ee938697e20da33e9f66a/01-docker-terraform/1_terraform_gcp/terraform/terraform_basic
+
+ Enter a value: yes
+
+google_bigquery_dataset.demo_dataset: Creating...
+google_storage_bucket.demo-bucket: Creating...
+google_bigquery_dataset.demo_dataset: Creation complete after 0s [id=projects/strange-mariner-375614/datasets/anand_demo_dataset]
+google_storage_bucket.demo-bucket: Creation complete after 1s [id=anand_terraform-demo-terra-bucket]
